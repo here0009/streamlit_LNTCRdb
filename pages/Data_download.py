@@ -14,8 +14,8 @@ st.set_page_config(
     page_icon="🔗",
 )
 
-LungCancer_meta_data = "/haplox/users/donglf/web_services/TCR/streamlit_LNTCRdb/metadata/LungCancer_TCR_data.csv"
-LungNodule_meta_data = "/haplox/users/donglf/web_services/TCR/streamlit_LNTCRdb/metadata/LungNodule_TCR_data.csv"
+LungCancer_meta_data = f"{PROJECT_DIR}/metadata/LungCancer_TCR_data.csv"
+LungNodule_meta_data = f"{PROJECT_DIR}/metadata/LungNodule_TCR_data.csv"
 
 
 def dataframe_with_selections(df):
