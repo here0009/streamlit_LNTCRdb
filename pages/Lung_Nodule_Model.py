@@ -52,6 +52,7 @@ THREADS = 10
 MODEL_FILE = f'{PROJECT_DIR}/model_data/LungNodule_model/models_list.rds'
 FEATURE_FILE = f'{PROJECT_DIR}/model_data/LungNodule_model/features.csv'
 
+st.title("Lung Noduel Model")
 st.write('### Upload your TCR feature data')
 uploaded_file = st.file_uploader("Upload CSV file", type=['csv'])
 

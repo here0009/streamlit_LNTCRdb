@@ -13,7 +13,8 @@ import streamlit as st
 import pandas as pd
 
 def main():
-    st.title('Upload your TCR cdr3aa file')
+    st.title("Lung Cancer Model")
+    st.write('### Upload your TCR feature data')
 
     # Upload file
     uploaded_file = st.file_uploader("Upload CSV or Excel file", type=['csv', 'xlsx', 'txt', 'tsv'])
