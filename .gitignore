@@ -1,5 +1,7 @@
 __pycache__
 img
 selected_files.zip
-model_data/LungNodule_output/
+model_data/*_output/
+model_data/*_data/
 launch.log
+model_data

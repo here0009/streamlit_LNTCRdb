@@ -83,5 +83,3 @@ with tab4:
 
 with tab5:
     st.image(LN_TCRDB_mut_data, width=800, caption='Mutation information for LungCancerTCRdb')
-# st.image([LN_B_enrich_score, LN_T_enrich_score], use_column_width=True)
-

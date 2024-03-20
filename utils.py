@@ -29,5 +29,27 @@ def calculate_md5(file_path):
             md5_hash.update(chunk)
     return md5_hash.hexdigest()
 
+def calculate_md5_zip(file_path):
+    md5_hash = hashlib.md5()
+    with open(file_path, "rb") as _file:
+        # Read the file in chunks to handle large files
+        data = _file.read()
+        md5_hash.update(data)
+    return md5_hash.hexdigest()
+
+def save_uploaded_file_zip(uploaded_file, output_dir):
+    input_file = os.path.join(output_dir, 'input_data.zip')
+    with open(input_file, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    return input_file
+
+def save_uploaded_file(uploaded_file, output_dir):
+    input_file = os.path.join(output_dir, 'input_data.csv')
+    with open(input_file, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+    return input_file
+
 PROJECT_DIR = '.'
 CONFIG_FILE = f'{PROJECT_DIR}/datapath.json'
+RUNNING = False
+small_font = '<p style="color:Gray; font-size: 12px;">{}</p>'
