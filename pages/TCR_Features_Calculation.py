@@ -2,7 +2,6 @@ import sys
 import os
 import streamlit as st
 import pandas as pd
-import zipfile
 sys.path.append(f'{sys.path[0]}/..')
 import plotly.express as px
 import plotly.graph_objects as go
@@ -36,7 +35,7 @@ def stack_bar_plot(input_tbl, plot_title):
 def sns_multiple_box_plots_single(input_table, val_cols, color_lst, super_title):
     length = len(val_cols)
     # sns.set(rc={'figure.facecolor':(0,0,0,0), 'figure.backgroundcolor':(0,0,0,0)})
-    sns.set(rc={'figure.facecolor':(0,0,0,0), 'axes.facecolor':(0,0,0,0)}, font_scale=2)
+    sns.set_theme(rc={'figure.facecolor':(0,0,0,0), 'axes.facecolor':(0,0,0,0)}, font_scale=2)
     fig, axes = plt.subplots(1, length, figsize=(5*length,8))
     fig.suptitle(super_title)
     for i in range(length):
