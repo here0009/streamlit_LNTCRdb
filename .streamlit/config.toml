@@ -1,10 +1,7 @@
 [theme]
 primaryColor="#bf3131"
-backgroundColor="#f2f7bf"
-secondaryBackgroundColor="#f5eca7"
 textColor="#262730"
+
 
 [server]
 port=8501
-numThreads=8
-maxCacheSize=40000

@@ -35,13 +35,14 @@ def lntcr_db_score_bubble_plot():
     fig2 = plotly_bubble_plot(df,  'sample','LUNG_CANCER_GDNA_score','LUNG_CANCER_GDNA_score', 'Type')
     return fig1, fig2
 
-    
-    
 
 st.set_page_config(
     page_title="LungCancerTCRdb",
     page_icon="🏄‍♂️",
 )
+
+# with open( f"{PROJECT_DIR}/app/style.css" ) as css:
+#     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 
 Healthy_T_B_color_palette = ['#00B945','#FF2C00', '#845B97']
 st.sidebar.success("Choose from above")
@@ -57,6 +58,7 @@ LN_TCRDB_mut_data = f'{PROJECT_DIR}/img/lungCancerTCRdb//MutationTop20_TCR_immun
 with open(LN_TCRDB_LOGO_FILE, 'r') as _f:
     svg = _f.read()
     st.image(svg, width=400)
+    
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs(["Sample Info", "UMAP plot", "LungCancerTCRdb stat", "Enriched Seqs", "Mutation Info"])
 

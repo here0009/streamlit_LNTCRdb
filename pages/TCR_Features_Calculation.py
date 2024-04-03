@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 import utils
 import seaborn as sns
 import matplotlib.pyplot as plt
+from plotly.subplots import make_subplots
 from utils import PROJECT_DIR
 
 st.set_page_config(
@@ -46,6 +47,29 @@ def sns_multiple_box_plots_single(input_table, val_cols, color_lst, super_title)
 
     return fig
 
+def plotly_boxplot(input_tbl, col_lst, color_lst, title):
+    length = len(col_lst)
+    fig = make_subplots(rows=1, cols=length)
+    for i, _col in enumerate(col_lst):
+        fig.add_trace(
+            go.Box(y=input_tbl[_col],
+            name=_col,
+            marker_color=color_lst[i],boxpoints='all',
+            marker_size=2,line_width=1),
+            row=1, col=i+1,
+
+        )
+    fig.update_layout(
+        title=title,
+        yaxis=dict(autorange=True,showgrid=True,zeroline=True,dtick=0.2,gridcolor='rgb(255, 255, 255)',
+                gridwidth=1,zerolinecolor='rgb(255, 255, 255)',zerolinewidth=2,),
+        margin=dict(l=30,r=30,b=80,t=100,
+        ),
+        paper_bgcolor='rgba(0, 0, 0, 0)',
+        plot_bgcolor='rgba(0, 0, 0, 0)',
+        showlegend=True
+    )
+    return fig
 
 def get_group_freq_col(total_result_info_table):
     total_result_info_table['expanded'] = total_result_info_table['group_freq_2']
@@ -62,16 +86,44 @@ def get_tcr_features(input_file, output_dir):
         return tcr_feature_data
     os.system(f'unzip -o {input_file} -d {output_dir}/metadata/')
     os.system(f'{GET_METADATA_SCRIPT} {output_dir}/metadata/ {output_dir}/metadata.tsv')
-    os.system(f'bash {STAT_SCRIPT} {output_dir}/metadata.tsv {output_dir} ')
+    os.system(f'bash {STAT_SCRIPT} {output_dir}/metadata.tsv {output_dir} {THREADS}')
     return tcr_feature_data
 
+def run_model(input_file):
+    md5_checksum = utils.calculate_md5_zip(input_file)
+    st.write(f'md5 checksum for your input file: **{md5_checksum}**')
+    md5_checksum_file = os.path.join(OUTPUT_DIR, f'{md5_checksum}.zip')
+    os.system(f'cp {input_file} {md5_checksum_file}')
+    _dir = os.path.realpath(os.path.join(OUTPUT_DIR, md5_checksum))
+    os.makedirs(_dir, exist_ok=True)
+    tcr_feature_file = get_tcr_features(md5_checksum_file, _dir)
+    tcr_feature_tbl = pd.read_csv(tcr_feature_file)
+    st.dataframe(
+        tcr_feature_tbl,
+        column_config={
+        },
+        hide_index=True,
+    )
+    tcr_feature_tbl = get_group_freq_col(tcr_feature_tbl)
+    group_plot = stack_bar_plot(tcr_feature_tbl, 'cdr3aa freq distribution')
+    st.plotly_chart(group_plot, height=600, width=900)
+    stat_plot = sns_multiple_box_plots_single(tcr_feature_tbl, STAT_COLS, NATURE_COLORS, 'stat index box plots')
+    score_plot = sns_multiple_box_plots_single(tcr_feature_tbl, SCORE_COLS, NATURE_COLORS, 'score box plots')
+    st.pyplot(stat_plot)
+    st.pyplot(score_plot)
+    # stat_plot = plotly_boxplot(tcr_feature_tbl, STAT_COLS, NATURE_COLORS, 'stat index box plots')
+    # score_plot = plotly_boxplot(tcr_feature_tbl, SCORE_COLS, NATURE_COLORS, 'score box plots')
+    # st.plotly_chart(stat_plot)
+    # st.plotly_chart(score_plot)
 
 RUNNING = True
 OUTPUT_DIR = f'{PROJECT_DIR}/model_data/FeaturesCalculation_output'
-THREADS = 3
+THREADS = 10
 GET_METADATA_SCRIPT = f'{PROJECT_DIR}/scripts/get_metadata.py'
 STAT_SCRIPT = f'{PROJECT_DIR}/scripts/stat_from_metadata.sh'
 TEST_DATA_FILE = f'{PROJECT_DIR}/model_data/FeaturesCalculation_data/test.clonotypes.TRB.txt'
+TEST_META_ZIP_DATA = f'{PROJECT_DIR}/model_data/FeaturesCalculation_data/metadata2.zip'
+TEST_META_DATA = f'{PROJECT_DIR}/model_data/FeaturesCalculation_data/metadata2.csv'
 STAT_COLS = ['observedDiversity_mean','d50Index_mean','shannonWienerIndex_mean','normalizedShannonWienerIndex_mean','inverseSimpsonIndex_mean']
 # SCORE_COLS = ['KRAS_score','EGFR_score','REF_score','LUNG_CANCER_GDNA_score','LUNG_CANCER_TISSUE_score','Convergence_score']
 SCORE_COLS = ['REF_score','LUNG_CANCER_GDNA_score','LUNG_CANCER_TISSUE_score','Convergence_score']
@@ -82,10 +134,10 @@ NATURE_COLORS = ['#0C5DA5', '#00B945', '#FF9500', '#FF2C00', '#845B97', '#474747
 
 
 
-type_info = st.selectbox(
-    '**Is sample type information available(Malignant/Benign for Lung Nodule samples, Cancer/Healthy for Lung Cancer samples)**',
-    ('Yes', 'No'))
-st.write('You selected:', type_info)
+# type_info = st.selectbox(
+#     '**Is sample type information available(Malignant/Benign for Lung Nodule samples, Cancer/Healthy for Lung Cancer samples)**',
+#     ('Yes', 'No'))
+# st.write('You selected:', type_info)
 
 on = st.toggle('Show Example Data')
 if on:
@@ -100,6 +152,15 @@ if on:
         },
         hide_index=True,
     )
+    if st.button('Show Example Result'):
+        meta_tbl = pd.read_csv(TEST_META_DATA, sep='\t')
+        st.dataframe(
+            meta_tbl,
+            column_config={
+            },
+            hide_index=True,
+        )
+        run_model(TEST_META_ZIP_DATA)
 
 
 st.write('### Upload your TCR clonotype files')
@@ -112,27 +173,7 @@ if uploaded_file is not None:
         os.makedirs(OUTPUT_DIR, exist_ok=True)
         input_file = utils.save_uploaded_file_zip(uploaded_file, OUTPUT_DIR)
         # input_file = zipfile.ZipFile(uploaded_file)
-        md5_checksum = utils.calculate_md5_zip(input_file)
-        st.write(f'md5 checksum for your input file: **{md5_checksum}**')
-        md5_checksum_file = os.path.join(OUTPUT_DIR, f'{md5_checksum}.zip')
-        os.system(f'mv {input_file} {md5_checksum_file}')
-        _dir = os.path.realpath(os.path.join(OUTPUT_DIR, md5_checksum))
-        os.makedirs(_dir, exist_ok=True)
-        tcr_feature_file = get_tcr_features(md5_checksum_file, _dir)
-        tcr_feature_tbl = pd.read_csv(tcr_feature_file)
-        st.dataframe(
-            tcr_feature_tbl,
-            column_config={
-            },
-            hide_index=True,
-        )
-        tcr_feature_tbl = get_group_freq_col(tcr_feature_tbl)
-        group_plot = stack_bar_plot(tcr_feature_tbl, 'cdr3aa freq distribution')
-        st.plotly_chart(group_plot)
-        stat_plot = sns_multiple_box_plots_single(tcr_feature_tbl, STAT_COLS, NATURE_COLORS, 'stat index box plots')
-        st.pyplot(stat_plot)
-        score_plot = sns_multiple_box_plots_single(tcr_feature_tbl, SCORE_COLS, NATURE_COLORS, 'score box plots')
-        st.pyplot(score_plot)
+        run_model(input_file)
 
     else:
         st.write(f'Module not available for now')

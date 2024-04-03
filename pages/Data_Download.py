@@ -13,6 +13,8 @@ st.set_page_config(
     page_title="Data Download",
     page_icon="🔗",
 )
+# with open( f"{PROJECT_DIR}/app/style.css" ) as css:
+#     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 
 LungCancer_meta_data = f"{PROJECT_DIR}/metadata/LungCancer_TCR_data.csv"
 LungNodule_meta_data = f"{PROJECT_DIR}/metadata/LungNodule_TCR_data.csv"

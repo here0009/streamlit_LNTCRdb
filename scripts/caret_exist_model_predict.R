@@ -183,13 +183,17 @@ model_test_group_total = function(models_list, data, tag)
 test_data <- read_csv(test_file)
 models_list <- readRDS(model_file)
 feature_table <- read_csv(feature_file)
+
+
 features <- as.vector(unlist(feature_table['feature']))
 # cols <- get_selected_features(features, 10)
-stat_cols <- features
-stat_cols <- intersect(stat_cols, colnames(test_data))
+stat_cols <- intersect(features, colnames(test_data))
 print('Features for prediction')
 print(stat_cols)
-# get balanced healthy and cancer samples
+missing_features <-  setdiff(features, stat_cols)
+print('The following features were missing:')
+print(missing_features)
+
 
 test_data <- qc_filter2(test_data,pred_type)
 sample_type_counts <- c()

@@ -64,6 +64,19 @@ def predict_by_model(input_file:str, md5sum:str, type_info:str):
     log_file = os.path.join(OUTPUT_DIR, f'{md5sum}.log')
     os.system(f'{MODEL_prediction_script} {input_file} {OUTPUT_DIR} {THREADS} {MODEL_FILE} {FEATURE_FILE} {md5sum} {type_info} > {log_file} 2>&1')
 
+
+def run_model(input_file, type_info):
+    md5_checksum = utils.calculate_md5(input_file)
+    st.write(f'md5 checksum for your input file: **{md5_checksum}**')
+    md5_checksum_file = os.path.join(OUTPUT_DIR, f'{md5_checksum}_input.csv')
+    os.system(f'cp {input_file} {md5_checksum_file}')
+    if type_info == 'Yes':
+        predict_by_model(md5_checksum_file, md5_checksum, 'type')
+        get_results(OUTPUT_DIR, md5_checksum, 'type')
+    else:
+        predict_by_model(md5_checksum_file, md5_checksum, 'score')
+        get_results(OUTPUT_DIR, md5_checksum, 'score')
+
 st.set_page_config(
     page_title="Lung Nodule",
     page_icon="🫁",
@@ -97,6 +110,8 @@ if on:
         },
         hide_index=True,
     )
+    if st.button('Show Example Result'):
+        run_model(TEST_DATA_FILE, type_info)
 
 st.title("Lung Noduel Model")
 st.write('### Upload your TCR feature data')
@@ -112,16 +127,7 @@ if uploaded_file is not None:
     if RUNNING:
         os.makedirs(OUTPUT_DIR, exist_ok=True)
         input_file = utils.save_uploaded_file(uploaded_file, OUTPUT_DIR)
-        md5_checksum = utils.calculate_md5(input_file)
-        st.write(f'md5 checksum for your input file: **{md5_checksum}**')
-        md5_checksum_file = os.path.join(OUTPUT_DIR, f'{md5_checksum}_input.csv')
-        os.system(f'mv {input_file} {md5_checksum_file}')
-        if type_info == 'Yes':
-            predict_by_model(md5_checksum_file, md5_checksum, 'type')
-            get_results(OUTPUT_DIR, md5_checksum, 'type')
-        else:
-            predict_by_model(md5_checksum_file, md5_checksum, 'score')
-            get_results(OUTPUT_DIR, md5_checksum, 'score')
+        run_model(input_file, type_info)
     else:
         st.write(f'Module not available for now')
 
