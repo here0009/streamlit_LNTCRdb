@@ -51,5 +51,6 @@ def save_uploaded_file(uploaded_file, output_dir):
 
 PROJECT_DIR = '.'
 CONFIG_FILE = f'{PROJECT_DIR}/datapath.json'
-RUNNING = False
+RUNNING = True
 small_font = '<p style="color:Gray; font-size: 12px;">{}</p>'
+LN_TCRDB_LOGO_FILE = f'{PROJECT_DIR}/img/lung-cancer-tcr-db-logo/svg/logo-no-background.svg'
