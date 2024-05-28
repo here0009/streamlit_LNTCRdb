@@ -2,9 +2,9 @@
 backgroundColor="#F2FFE9"
 secondaryBackgroundColor="#97E7E1"
 primaryColor="#FA7070"
-
-
+font = "sans serif"
 
 
 [server]
 port=8501
+baseUrlPath  = "lungcancerTCRdb"

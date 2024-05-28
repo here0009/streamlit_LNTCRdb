@@ -16,9 +16,8 @@ config_dict = json.load(config_fhand)
 def get_treemap_plot(): 
     df = pd.read_csv(TOP1000_ENRICHED_SEQ_DATA)
     fig = px.treemap(df, path=['Group','cdr3aa'], values='score', color='cdr3aa')
-    fig.update_layout(margin=dict(t=20, l=0, r=0, b=60), template='simple_white', title={'text':'LungCancerTCRdb top1000 enriched seqs', 'y':0.1, 'x':0.3, 'font':{'size':14, 'color':'rgba(49, 51, 63, 0.6)'}}, 
+    fig.update_layout(margin=dict(t=20, l=0, r=0, b=60), template='simple_white', title={'text':'LungCancerTCRdb top1000 enriched seqs', 'y':0.1, 'x':0.3, 'font':{'size':12, 'color':'rgba(49, 51, 63, 0.6)'}}, 
     title_font_color='rgba(49, 51, 63, 0.6)', 
-    
     title_font_size=14,
     font_family="Arial", title_font_family="Arial", width=800)
     st.plotly_chart(fig)
@@ -63,31 +62,34 @@ def score_scatter_plot(input_tbl, x_col, y_col, size_col, color_col, facet_col, 
 
 st.set_page_config(
     page_title="LungCancerTCRdb",
-    page_icon="🏄‍♂️",
+    page_icon="🫁",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# with open( f"{PROJECT_DIR}/app/style.css" ) as css:
-#     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
+with open( f"{PROJECT_DIR}/app/style.css" ) as css:
+    st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
 
 Healthy_T_B_color_palette = ['#00B945','#FF2C00', '#845B97']
 # st.sidebar.success("Choose from above")
 PROJECT_DIR = '.'
-WORK_FLOW_PLOT = f'{PROJECT_DIR}/img/lungCancerTCRdb/WorkFlowDiagram.png'
+# WORK_FLOW_PLOT = f'{PROJECT_DIR}/img/lungCancerTCRdb/WorkFlowDiagram.png'
+WORK_FLOW_PLOT = f'{PROJECT_DIR}/img/lungCancerTCRdb/WorkFlowDiagram2.svg'
 # LN_TCRDB_LOGO_FILE = f'{PROJECT_DIR}/img/lung-cancer-tcr-db-logo/svg/logo-no-background.svg'
 TOP1000_ENRICHED_SEQ_DATA= f'{PROJECT_DIR}/img/img_data/LungCancerTCRdb_top1000_enriched_seqs.csv'
 LN_TCRDB_SCORE_DATA = f'{PROJECT_DIR}/img/img_data/LungCancerTCRdb_score_tbl.csv'
-LN_TCRDB_UMAP_PLOT = f'{PROJECT_DIR}/img/lungCancerTCRdb/LungCancerTCRdb_UMAP_plot.png'
+# LN_TCRDB_UMAP_PLOT = f'{PROJECT_DIR}/img/lungCancerTCRdb/LungCancerTCRdb_UMAP_plot.png'
+LN_TCRDB_UMAP_PLOT = f'{PROJECT_DIR}/img/lungCancerTCRdb/LungTCR_UMAP_v3.svg'
 LN_TCRDB_stat_index = f'{PROJECT_DIR}/img/lungCancerTCRdb/LungCancerTCRdb_stat_index.png'
 LN_TCRDB_freq_group = f'{PROJECT_DIR}/img/lungCancerTCRdb/LungCancerTCRdb_TCR_freq_group3.png'
 # LN_TCRDB_mut_data = f'{PROJECT_DIR}/img/lungCancerTCRdb//MutationTop20_TCR_immune3.svg'
-LN_TCRDB_mut_data = f'{PROJECT_DIR}/img/lungCancerTCRdb//MutationTop20_TCR_immune3.png'
+LN_TCRDB_mut_data = f'{PROJECT_DIR}/img/lungCancerTCRdb//MutationTop20_TCR_immune5.png'
 
-with open(LN_TCRDB_LOGO_FILE, 'r') as _f:
-    svg = _f.read()
+# with open(LN_TCRDB_LOGO_FILE, 'r') as _f:
+#     svg = _f.read()
     # st.image(svg, width=400)
-    st.sidebar.image(svg)
+st.sidebar.image(LN_TCRDB_LOGO_FILE, width=200)
+
 
 # sample_info_df = pd.DataFrame({'Category':['Healthy Blood', 'Lung Cancer Blood', 'Lung Cancer Tissue'], 'Short':['Healthy', 'Cancer_B', 'Cancer_T'], 'Sample Number':[2699, 3360, 988]})
 # st.dataframe(
@@ -97,58 +99,78 @@ with open(LN_TCRDB_LOGO_FILE, 'r') as _f:
 #     ) 
 
 # tab1, tab2, tab3, tab4, tab5 = st.tabs(["Sample Info", "UMAP plot", "LungCancerTCRdb stat", "Enriched Seqs", "Mutation Info"])
-with open(LN_TCRDB_LOGO_FILE, 'r') as _f:
-    svg = _f.read()
-    st.image(svg, width=600)
+# with open(LN_TCRDB_LOGO_FILE, 'r') as _f:
+#     svg = _f.read()
+st.image(LN_TCRDB_LOGO_FILE, width=400)
+
+introduction_header = "Introduction for LungTCR"
 introduction = """
-### Introduction for LCTRDB
-LCTRDB(Lung Cancer TCR Database) provides a comprehensive TCR repertoire data in lung cancer, including TCR clonotype frequency, TCR diversity, TRB V/J gene usage, and lung cancer-enriched CDR3 signatures. This database contains over 4,000 tissue/blood samples from lung cancer and over 2,500 peripheral blood samples from healthy individuals. 
-
+LungTCR provides a comprehensive TCR repertoire data in lung cancer, including TCR clonotype frequency, TCR diversity, TRB V/J gene usage, and lung cancer-enriched CDR3 signatures. This database contains 3,360 blood samples and 988 tumor samples from lung cancer and 2,699 peripheral blood samples from healthy individuals.
+<br><br>
 Moreover, the tumor mutation profiles, PD-L1 expression and HLA genotypes of lung cancer were integrated with TCR characteristics, demonstrating an intrinsic relationship between tumor mutations and TCR repertoire. 
-
+<br><br>
 A predictive model was offered to users for evaluating the risk of lung cancer by inputting the TCR features matrix.
 """
-overview = """
-### Overview
-* Display the difference in TCR repertoire between lung cancer and  healthy individuals.
-* Identify the cancer-enriched CDR3 sequences.
-* Calculate multiple TCR features and visualization.
-* Analysis the correlation between tumor mutations and TCR characteristics.
-* Construct the predictive model for evaluating risk of lung cancer.
-"""
-describe = """
-### Study Summary
-In LCTRDB study, we performed TCR β-chain sequencing using a multiplex PCR approach with the panels of V and J primers. The difference of CDR3 sequences between lung cancer (include tissue and blood) and healthy individuals was investigated. Significant difference in TCR shannon entropy, clonality, V/J gene usage, and clonotype was demonstrated.  
+overview_header = "Overview"
+overview_lst = ['Display the difference in TCR repertoire between lung cancer and  healthy individuals.','Identify the cancer-enriched CDR3 sequences.','Calculate multiple TCR features and visualization.','Analysis the correlation between tumor mutations and TCR characteristics.','Construct the predictive model for evaluating risk of lung cancer.']
 
+describe_header = "Study Summary"
+describe = """
+In LungTCR study, we performed TCR β-chain sequencing using a multiplex PCR approach with the panels of V and J primers. The difference of CDR3 sequences between lung cancer (include tissue and blood) and healthy individuals was investigated. Significant difference in TCR shannon entropy, clonality, V/J gene usage, and clonotype was demonstrated.  
+<br><br>
 We identified thousands of unique CDR3 sequences which are specifically enriched in lung cancer tissue/blood. By applying these cancer-enriched TCR features, we developed a pipeline to measure the content of lung cancer-related TCRs by alignment.
 """
+mutation_header = "Mutation Data"
 mutation = """
-### Mutatioin Data
 To characterize the mutation profile and calculate the Tumor Mutational Burden (TMB), whole-exome sequencing (WES) was conducted on partial lung cancer tissue specimens. 
-
+<br><br>
 HLA Genotyping was also determined by whole exome sequencing. HLA evolutionay divergence (HED) was calculated by midasHLA, with the averge HLA evolutionay divergence of HLA-A, HLA-B and HLA-C loci used as the final HED score.
-
+<br><br>
 PD-L1 expression was determined by immunohistochemistry (IHC) on formalin-fixed paraffin-embedded (FFPE) tissue sections. PD-L1 expression levels were categorized into three groups based on the tumor proportion score(TPS): Neagtive(TPS ≤  1%), low expression(1% < TPS expression ≤ 50%), and high expression(TPS > 50%)
 """
+
+
+copyright_note= "<br><br>" * 8 + """
+<b>Contact US</b>
+<br><br>
+Technical Issues:<br>
+<b>Linfeng Dong</b>: <a href="mailto:donglf@haplox.com">donglf@haplox.com</a>
+<br><br>
+Any Suggestions:<br>
+<b>Wei Guo Ph.D</b>: <a href="mailto:guowei@haplox.com">guowei@haplox.com</a><br>
+<b>Huaichao Luo: M.D</b>: <a href="mailto:luo1987cc@163.com">luo1987cc@163.com</a>
+<br><br>
+<b>Copyright (c)
+HaploX Biotechnology & Sichuan Cancer Hospital
+LungTCR developer team</b>
+"""
+
+with st.sidebar:
+    st.markdown(utils.note_font.format(copyright_note), unsafe_allow_html=True)    
+
 col_intro_1, col_intro_2 = st.columns((4,6))
 with col_intro_1:
-    st.write(introduction)
+    # st.markdown('### ')
+    st.markdown(utils.sub_header_font.format(introduction_header), unsafe_allow_html=True)
+    st.markdown(utils.content_font.format(introduction), unsafe_allow_html=True)
 with col_intro_2:
     st.image(WORK_FLOW_PLOT, caption='Study workflow', width=800)
 st.divider()
 col_treemap_1, col_treemap_2 = st.columns((4, 6))
 with col_treemap_1:
-    st.write(overview)
+    st.markdown(utils.sub_header_font.format(overview_header), unsafe_allow_html=True)
+    for _str in overview_lst:
+        st.markdown(utils.list_font.format(_str), unsafe_allow_html=True)
 with col_treemap_2:
     get_treemap_plot()
 st.divider()
 col_feature_1, col_feature_2 = st.columns((4,6))
 with col_feature_1:
-    st.write(describe)
-    
+    st.markdown(utils.sub_header_font.format(describe_header), unsafe_allow_html=True)
+    st.markdown(utils.content_font.format(describe), unsafe_allow_html=True)
 with col_feature_2:
     # st.image(LN_TCRDB_stat_index, caption='Stat index for LungCanerTCRdb')
-    st.image(LN_TCRDB_UMAP_PLOT, caption='UMAP plot for data in LungCancerTCRdb', width=800)
+    st.image(LN_TCRDB_UMAP_PLOT, caption='UMAP plot for data in LungTCR', width=800)
     
     
 # st.divider()
@@ -171,8 +193,10 @@ with col_feature_2:
 #     st.plotly_chart(enrich_fig)
 
 st.divider()
-col_mut1, col_mut2 = st.columns((4, 6))
+col_mut1, col_mut2 = st.columns((3, 7))
 with col_mut1:
-    st.write(mutation)
+    st.markdown(utils.sub_header_font.format(mutation_header), unsafe_allow_html=True)
+    st.markdown(utils.content_font.format(mutation), unsafe_allow_html=True)
 with col_mut2:
-    st.image(LN_TCRDB_mut_data, caption='Mutation information for LungCancerTCRdb', width=800)
+    st.image(LN_TCRDB_mut_data, caption='Mutation information for LungTCR', width=1000)
+    # st.image(LN_TCRDB_mut_data, caption='Mutation information for LungTCR', width=800)

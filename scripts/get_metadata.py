@@ -1,4 +1,4 @@
-#!/x03_haplox/users/donglf/miniconda3/bin/python
+#!/x03_haplox/users/donglf/miniconda3/envs/streamit/bin/python
 # coding: utf-8
 # aggregate the trb result of tcr analysis pipleine
 # example: /x03_haplox/users/donglf/tcr_scripts/get_metadata.py /x06_haplox/users/donglf/Project/research/tcr/220108_A00250_0087_AH337TDSX3/mutation 
@@ -15,7 +15,7 @@ FILE_TYPE = '*.txt'
 output_fhand = open(output_file, 'w')
 output_fhand.write('\t'.join(['file_name','sample_id']))
 
-files = glob.glob(os.path.join(input_path, '**', FILE_TYPE))
+files = glob.glob(os.path.join(input_path, '**', FILE_TYPE), recursive=True)
 for _file in files:
     _id = '.'.join(os.path.basename(_file).split('.')[:-1])
     # print(f'Processing {_file}')

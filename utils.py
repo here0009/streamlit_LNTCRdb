@@ -52,5 +52,12 @@ def save_uploaded_file(uploaded_file, output_dir):
 PROJECT_DIR = '.'
 CONFIG_FILE = f'{PROJECT_DIR}/datapath.json'
 RUNNING = True
-small_font = '<p style="color:Gray; font-size: 12px;">{}</p>'
-LN_TCRDB_LOGO_FILE = f'{PROJECT_DIR}/img/lung-cancer-tcr-db-logo/svg/logo-no-background.svg'
+small_font = '<p style="color:Gray; font-size: 12px; font-family: Arial;">{}</p>'
+# LN_TCRDB_LOGO_FILE = f'{PROJECT_DIR}/img/lung-cancer-tcr-db-logo/svg/logo-no-background.svg'
+LN_TCRDB_LOGO_FILE = f'{PROJECT_DIR}/img/lung-cancer-tcr-db-logo/LungTCR2.svg'
+Healthy_T_B_colors = ['#00B945','#FF2C00', '#845B97']
+header_font = '<p style="color:Black; font-size: 27px; font-family: Arial; font-weight:bold;">{}</p>'
+sub_header_font = '<p style="color:Black; font-size: 21px; font-family: Arial; font-weight:bold;">{}</p>'
+content_font = '<p style="color:Black; font-size: 15px; font-family: Arial;">{}</p>'
+list_font  = '<li style="color:Black; font-size: 15px; font-family: Arial;">{}</li>'
+note_font = '<p style="color:Gray; font-size: 12px; font-family: Arial;">{}</p>'

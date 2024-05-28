@@ -1,6 +1,6 @@
 html, body, [class*="css"] {
-    /* font-family: 'Arial', sans-serif;  */
-    font-size: 22px;
+    font-family: 'Arial', sans-serif; 
+    /* font-size: 22px;
     font-weight: 400;
-    color: #091747;
+    color: #091747; */
 }
