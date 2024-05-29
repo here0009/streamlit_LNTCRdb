@@ -6,6 +6,7 @@ sys.path.append(f'{sys.path[0]}/..')
 import utils
 from utils import PROJECT_DIR, RUNNING, LN_TCRDB_LOGO_FILE
 import plotly.express as px
+import base64
 
 CONFIG_FILE=f"{PROJECT_DIR}/datapath.json"
 config_fhand = open(CONFIG_FILE, "r")
@@ -52,13 +53,17 @@ def score_scatter_plot(input_tbl, x_col, y_col, size_col, color_col, facet_col, 
     )
     return fig
 
-# @st.cache_data()
-# def lntcr_db_score_bubble_plot():
-#     df = pd.read_csv(LN_TCRDB_SCORE_DATA)
-#     fig1 = plotly_bubble_plot(df,  'sample', 'LUNG_CANCER_TISSUE_score','LUNG_CANCER_TISSUE_score', 'Type')
-#     fig2 = plotly_bubble_plot(df,  'sample','LUNG_CANCER_GDNA_score','LUNG_CANCER_GDNA_score', 'Type')
-#     return fig1, fig2
 
+@st.cache_data
+def load_svg(file_path):
+    with open(file_path, "r") as f:
+        return f.read()
+
+def render_svg(svg):
+    """Renders the given svg string."""
+    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
+    html = f'<div style="width: 500;"><img src="data:image/svg+xml;base64,%s"/></div>' % b64 
+    st.write(html, unsafe_allow_html=True)
 
 st.set_page_config(
     page_title="LungCancerTCRdb",
@@ -83,7 +88,7 @@ LN_TCRDB_UMAP_PLOT = f'{PROJECT_DIR}/img/lungCancerTCRdb/LungTCR_UMAP_v3.svg'
 LN_TCRDB_stat_index = f'{PROJECT_DIR}/img/lungCancerTCRdb/LungCancerTCRdb_stat_index.png'
 LN_TCRDB_freq_group = f'{PROJECT_DIR}/img/lungCancerTCRdb/LungCancerTCRdb_TCR_freq_group3.png'
 # LN_TCRDB_mut_data = f'{PROJECT_DIR}/img/lungCancerTCRdb//MutationTop20_TCR_immune3.svg'
-LN_TCRDB_mut_data = f'{PROJECT_DIR}/img/lungCancerTCRdb//MutationTop20_TCR_immune5.png'
+LN_TCRDB_mut_data = f'{PROJECT_DIR}/img/lungCancerTCRdb//MutationTop20_TCR_immune5.svg'
 
 # with open(LN_TCRDB_LOGO_FILE, 'r') as _f:
 #     svg = _f.read()
@@ -198,5 +203,7 @@ with col_mut1:
     st.markdown(utils.sub_header_font.format(mutation_header), unsafe_allow_html=True)
     st.markdown(utils.content_font.format(mutation), unsafe_allow_html=True)
 with col_mut2:
-    st.image(LN_TCRDB_mut_data, caption='Mutation information for LungTCR', width=1000)
+    svg_string = load_svg(LN_TCRDB_mut_data)
+    st.image(svg_string, caption='Mutation information for LungTCR', width=1000)
+    # st.image(LN_TCRDB_mut_data, caption='Mutation information for LungTCR', width=1000)
     # st.image(LN_TCRDB_mut_data, caption='Mutation information for LungTCR', width=800)
