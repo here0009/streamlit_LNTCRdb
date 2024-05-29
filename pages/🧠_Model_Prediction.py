@@ -113,14 +113,14 @@ with col_select_1:
     # st.write('Your selection:', model)
 if model == 'Lung Cancer Model':
     MODEL_prediction_script = f'{PROJECT_DIR}/scripts/lungCancer_model_predict.R'
-    OUTPUT_DIR = f'{PROJECT_DIR}/model_data/LungCancer_output'
+    OUTPUT_DIR = f'{PROJECT_DIR}/output/LungCancer_output'
     MODEL_FILE = f'{PROJECT_DIR}/model_data/LungCancer_model/models_list.rds'
     FEATURE_FILE = f'{PROJECT_DIR}/model_data/LungCancer_model/features.csv'
     TEST_DATA_FILE = f'{PROJECT_DIR}/model_data/LungCancer_model/test_data_concise.csv'
     type_info_hint = '**Is sample type information available(Cancer/Healthy)**'
 elif model == 'Lung Nodule Model':
     MODEL_prediction_script = f'{PROJECT_DIR}/scripts/caret_exist_model_predict.R'
-    OUTPUT_DIR = f'{PROJECT_DIR}/model_data/LungNodule_output'
+    OUTPUT_DIR = f'{PROJECT_DIR}/output/LungNodule_output'
     MODEL_FILE = f'{PROJECT_DIR}/model_data/LungNodule_model/models_list.rds'
     FEATURE_FILE = f'{PROJECT_DIR}/model_data/LungNodule_model/features.csv'
     TEST_DATA_FILE = f'{PROJECT_DIR}/model_data/LungNodule_model/lungNodule_val_data_concise.csv'

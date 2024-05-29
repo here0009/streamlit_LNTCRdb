@@ -134,7 +134,7 @@ st.set_page_config(
 with open( f"{PROJECT_DIR}/app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
     
-OUTPUT_DIR = f'{PROJECT_DIR}/model_data/FeaturesCalculation_output'
+OUTPUT_DIR = f'{PROJECT_DIR}/output/FeaturesCalculation_output'
 THREADS = 10
 GET_METADATA_SCRIPT = f'{PROJECT_DIR}/scripts/get_metadata.py'
 STAT_SCRIPT = f'{PROJECT_DIR}/scripts/stat_from_metadata.sh'
