@@ -2,3 +2,5 @@ __pycache__
 selected_files.zip
 launch.log
 output
+model_data/FeaturesCalculation_data/
+.streamlit/config.toml

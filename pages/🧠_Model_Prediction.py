@@ -59,10 +59,17 @@ def get_results(output_dir, md5_tag, type_info):
             svg = _f.read()
             st.image(svg)
 
-@st.cache_data(show_spinner="Processing...", max_entries=100)
+# @st.cache_data(show_spinner="Processing...", max_entries=100)
 def predict_by_model(input_file:str, md5sum:str, type_info:str):
     log_file = os.path.join(OUTPUT_DIR, f'{md5sum}.log')
-    os.system(f'{MODEL_prediction_script} {input_file} {OUTPUT_DIR} {THREADS} {MODEL_FILE} {FEATURE_FILE} {md5sum} {type_info} > {log_file} 2>&1')
+    pred_val_file = os.path.join(OUTPUT_DIR, f'{md5sum}_pred_val.csv')
+    roc_file = os.path.join(OUTPUT_DIR, f'{md5sum}_roc.svg')
+    if type_info == 'score' and os.path.exists(pred_val_file):
+        pass
+    elif type_info == 'type' and os.path.exists(roc_file):
+        pass
+    else:
+        os.system(f'{MODEL_prediction_script} {input_file} {OUTPUT_DIR} {THREADS} {MODEL_FILE} {FEATURE_FILE} {md5sum} {type_info} > {log_file} 2>&1')
 
 
 def run_model(input_file, type_info):
