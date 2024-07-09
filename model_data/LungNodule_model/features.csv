@@ -7,7 +7,7 @@ LUNG_CANCER_TISSUE_score
 L_score
 N_score
 REF_score
-SN实性
+SN
 TRBJ2-6
 TRBV18
 TRBV19
@@ -25,7 +25,7 @@ glitch
 group_freq_5
 inverseSimpsonIndex_mean
 normalizedShannonWienerIndex_mean
-pSN部分实性
+pSN
 quit_somking
 shannonWienerIndex_mean
 size(mm)

@@ -1,4 +1,4 @@
-#!/data/lungtcr/miniconda3/envs/r_env/bin/Rscript
+#!/haplox/users/donglf/miniconda3/envs/r_env/bin/Rscript
 # ref: https://machinelearningmastery.com/feature-selection-with-the-caret-r-package/
 # ref: https://www.machinelearningplus.com/machine-learning/feature-selection/
 # ref: https://www.datacareer.ch/blog/ridge-and-lasso-in-r/

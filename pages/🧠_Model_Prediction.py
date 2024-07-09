@@ -54,6 +54,7 @@ def get_results(output_dir, md5_tag, type_info):
         st.write("#### Model metrics")
         st.dataframe(model_metric_tbl.T)
         st.write("#### ROC curve")
+        roc_tbl.rename(index={0:'AUROC'}, inplace=True)
         st.dataframe(roc_tbl)
         with open(roc_plot, 'r') as _f:
             svg = _f.read()
@@ -70,6 +71,7 @@ def predict_by_model(input_file:str, md5sum:str, type_info:str):
         pass
     else:
         os.system(f'{MODEL_prediction_script} {input_file} {OUTPUT_DIR} {THREADS} {MODEL_FILE} {FEATURE_FILE} {md5sum} {type_info} > {log_file} 2>&1')
+    # os.system(f'{MODEL_prediction_script} {input_file} {OUTPUT_DIR} {THREADS} {MODEL_FILE} {FEATURE_FILE} {md5sum} {type_info} > {log_file} 2>&1')
 
 
 def run_model(input_file, type_info):
@@ -97,7 +99,7 @@ with open( f"{PROJECT_DIR}/app/style.css" ) as css:
 
 PROJECT_DIR = '.'
 THREADS = 3
-METHOD_LST = ['rf', 'gbm', 'glmnet', 'svmLinear', 'svmRadial']
+METHOD_LST = ['TCRnodseekPlus','randomForest', 'gbm', 'svmLinear', 'svmRadial']
 NATURE_COLORS = ['#0C5DA5', '#00B945', '#FF9500', '#FF2C00', '#845B97', '#474747', '#9e9e9e']
 description = """
 This module can be applied for evaluating the risk of lung cancer or malignant lung nodule. Upload the TCR feature table according to the required format (see document), the prediction probability for each sample will be generated. If the group label is available in the input file, ROC curve and model performance will also be presented.
@@ -114,8 +116,9 @@ with col_intro_2:
 col_select_1, col_select_2, col_select_3 = st.columns((1, 1, 1))
 with col_select_1:
     model = st.radio(
-        '**Select Model**',
-        options = ['Lung Cancer Model', 'Lung Nodule Model']
+        '**Model for prediction**',
+        # options = ['Lung Cancer Model', 'Lung Nodule Model']
+        options = ['TCRnodseek plus model']
     )
     # st.write('Your selection:', model)
 if model == 'Lung Cancer Model':
@@ -125,7 +128,7 @@ if model == 'Lung Cancer Model':
     FEATURE_FILE = f'{PROJECT_DIR}/model_data/LungCancer_model/features.csv'
     TEST_DATA_FILE = f'{PROJECT_DIR}/model_data/LungCancer_model/test_data_concise.csv'
     type_info_hint = '**Is sample type information available(Cancer/Healthy)**'
-elif model == 'Lung Nodule Model':
+elif model == 'TCRnodseek plus model':
     MODEL_prediction_script = f'{PROJECT_DIR}/scripts/caret_exist_model_predict.R'
     OUTPUT_DIR = f'{PROJECT_DIR}/output/LungNodule_output'
     MODEL_FILE = f'{PROJECT_DIR}/model_data/LungNodule_model/models_list.rds'

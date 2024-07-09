@@ -1,4 +1,4 @@
-#!/data/lungtcr/miniconda3/envs/r_env/bin/Rscript
+#!/haplox/users/donglf/miniconda3/envs/r_env/bin/Rscript
 # ref: https://machinelearningmastery.com/feature-selection-with-the-caret-r-package/
 # ref: https://www.machinelearningplus.com/machine-learning/feature-selection/
 # ref: https://www.datacareer.ch/blog/ridge-and-lasso-in-r/
@@ -128,7 +128,7 @@ model_test_val_total = function(models_list, data, tag){
   notes <- c(paste(names(models_list), total_metrics))
   legend("bottomright", legend = notes, col = color_palettes, lty = 1)
   dev.off()
-  colnames(total_metrics) <- c('randomForest', 'gbm', 'glmnet', 'svmLinear', 'svmRadial')
+  colnames(total_metrics) <- c('TCRnodseekPlus','randomForest', 'gbm', 'svmLinear', 'svmRadial')
   write.csv(total_metrics,file.path(output_dir, paste0(tag, "_roc.csv")),row.names=FALSE, quote=FALSE)
   write.csv(pred_val_df,file.path(output_dir, paste0(tag, "_pred_val.csv")),row.names=FALSE, quote=FALSE)
 }
@@ -176,7 +176,7 @@ model_test_group_total = function(models_list, data, tag)
     model_cm_metrics <- as.matrix(model_cm$byClass)
     total_metrics <- cbind(total_metrics, model_cm_metrics)
   }
-  colnames(total_metrics) <- c('randomForest', 'gbm', 'glmnet', 'svmLinear', 'svmRadial')
+  colnames(total_metrics) <- c('TCRnodseekPlus','randomForest', 'gbm', 'svmLinear', 'svmRadial')
   write.csv(total_metrics,file.path(output_dir, paste0(tag, "_model_metric.csv")),row.names=TRUE, quote=FALSE)
 }
 
