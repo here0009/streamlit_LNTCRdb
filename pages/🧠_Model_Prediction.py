@@ -8,6 +8,7 @@ from utils import PROJECT_DIR
 import plotly.express as px
 import plotly.graph_objects as go
 from utils import PROJECT_DIR, RUNNING, LN_TCRDB_LOGO_FILE
+import json
 
 
 @st.cache_data(max_entries=100)
@@ -65,13 +66,13 @@ def predict_by_model(input_file:str, md5sum:str, type_info:str):
     log_file = os.path.join(OUTPUT_DIR, f'{md5sum}.log')
     pred_val_file = os.path.join(OUTPUT_DIR, f'{md5sum}_pred_val.csv')
     roc_file = os.path.join(OUTPUT_DIR, f'{md5sum}_roc.svg')
-    if type_info == 'score' and os.path.exists(pred_val_file):
-        pass
-    elif type_info == 'type' and os.path.exists(roc_file):
-        pass
-    else:
-        os.system(f'{MODEL_prediction_script} {input_file} {OUTPUT_DIR} {THREADS} {MODEL_FILE} {FEATURE_FILE} {md5sum} {type_info} > {log_file} 2>&1')
-    # os.system(f'{MODEL_prediction_script} {input_file} {OUTPUT_DIR} {THREADS} {MODEL_FILE} {FEATURE_FILE} {md5sum} {type_info} > {log_file} 2>&1')
+    # if type_info == 'score' and os.path.exists(pred_val_file):
+    #     pass
+    # elif type_info == 'type' and os.path.exists(roc_file):
+    #     pass
+    # else:
+    #     os.system(f'{config_dict['Rscript']} {MODEL_prediction_script} {input_file} {OUTPUT_DIR} {THREADS} {MODEL_FILE} {FEATURE_FILE} {md5sum} {type_info} > {log_file} 2>&1')
+    os.system(f'{config_dict['Rscript']} {MODEL_prediction_script} {input_file} {OUTPUT_DIR} {THREADS} {MODEL_FILE} {FEATURE_FILE} {md5sum} {type_info} > {log_file} 2>&1')
 
 
 def run_model(input_file, type_info):
@@ -104,6 +105,9 @@ NATURE_COLORS = ['#0C5DA5', '#00B945', '#FF9500', '#FF2C00', '#845B97', '#474747
 description = """
 This module can be applied for evaluating the risk of lung cancer or malignant lung nodule. Upload the TCR feature table according to the required format (see document), the prediction probability for each sample will be generated. If the group label is available in the input file, ROC curve and model performance will also be presented.
 """
+config_file = f'{PROJECT_DIR}/config.json'
+with open(config_file, 'r') as fhand:
+    config_dict = json.load(fhand)
 
 st.sidebar.image(utils.LN_TCRDB_LOGO_FILE, width=200)
     

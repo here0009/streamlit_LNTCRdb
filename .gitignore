@@ -4,3 +4,4 @@ selected_files.zip
 output
 model_data/FeaturesCalculation_data/
 .streamlit/config.toml
+config.json
