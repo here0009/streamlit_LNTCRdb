@@ -120,7 +120,8 @@ def request_download_agrid(meta_data_file:str, subtitle):
     # options for theme: {'STREAMLIT': <AgGridTheme.STREAMLIT: 'streamlit'>, 'ALPINE': <AgGridTheme.ALPINE: 'alpine'>, 'BALHAM': <AgGridTheme.BALHAM: 'balham'>, 'MATERIAL': <AgGridTheme.MATERIAL: 'material'>}
     st.markdown(utils.sub_header_font.format("Selected"), unsafe_allow_html=True)
     v = response['selected_rows']
-    if v:
+    # st.write(v)
+    if not v is None:
         selected_tbl = pd.DataFrame(v)
         selected_tbl = selected_tbl[DOWNLOAD_TBL_COLS]
         st.dataframe(selected_tbl, width=1000)
@@ -128,17 +129,24 @@ def request_download_agrid(meta_data_file:str, subtitle):
         selected_num = len(checked_files)
         selected_num_str = f'{selected_num} files were selected'
         st.markdown(utils.content_font.format(selected_num_str), unsafe_allow_html=True)
-        if st.button(f"Download Request for {subtitle}") and selected_num > 0:
+        on = st.toggle('Show Download Request')
+        # if st.button(f"Download Request for {subtitle}") and selected_num > 0:
+        if on and selected_num > 0:
             col1, col2, col3 = st.columns((1, 1, 1))
             with col1:
-                st.text_input('Email')
-                st.text_input('Name')
-                st.text_input('Institute')
+                email = st.text_input('Email', key='email')
+                name = st.text_input('Name', key='name')
+                institute = st.text_input('Institute', key='institute')
             with col2:
                 with st.container():
-                    st.text_area('Research purpose', height=200)
+                    r_purpose = st.text_area('Research purpose', height=200, key='research_purpose')
             submision = st.button('Submit Request')
-
+            if submision:
+                request_info_dict = {'Email':[email], 'Name':[name], 'Institute':[institute], 'Research purpose':[r_purpose]}
+                request_info_df = pd.DataFrame(request_info_dict)
+                st.dataframe(request_info_df, column_config={}, hide_index=True)
+                st.markdown(utils.content_font.format('Your download request has been submitted. You will receive a download link via email upon approval'), unsafe_allow_html=True)
+            
 # total_metadata_dir = '/haplox/users/donglf/web_services/TCR/total_data/'
 # LungCancer_meta_data = f"{total_metadata_dir}/metadata/LungCancer_TCR_data.csv"
 # LungNodule_meta_data = f"{total_metadata_dir}/metadata/LungNodule_TCR_data.csv"
@@ -204,3 +212,4 @@ with tab4:
     }
     for _text, _file in info_dict.items():
         download_button(_text, _file)
+        
