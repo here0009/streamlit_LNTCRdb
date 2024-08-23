@@ -9,6 +9,9 @@ from zipfile import ZipFile
 sys.path.append(f'{sys.path[0]}/..')
 import utils
 from utils import PROJECT_DIR
+import logging
+import send_mail
+from collections import OrderedDict
 
 
 @st.cache_data
@@ -56,24 +59,48 @@ def select_data_download(meta_data_file:str, subtitle):
     if st.button(f"Download Selected Files from {subtitle}") and len(checked_files) > 0:
         download_files(checked_files)
 
-def request_download(meta_data_file:str, subtitle):
+def metadata_preview(meta_data_file:str, subtitle):
     st.markdown(utils.sub_header_font.format(subtitle), unsafe_allow_html=True)
     meta_tbl = utils.read_csv(meta_data_file)
-    selection = dataframe_with_selections(meta_tbl)
-    st.dataframe(selection, column_config={"file_name":None}, width=600)
-    checked_files = selection['file_name'].tolist()
+    meta_tbl['file_name'] = meta_tbl['file_name'].map(os.path.basename)
+    meta_tbl = meta_tbl[DOWNLOAD_TBL_COLS]
     # st.write(checked_files)
-    if st.button(f"Download Request for {subtitle}") and len(checked_files) > 0:
-        col1, col2, col3 = st.columns((1, 1, 1))
-        with col1:
-            st.text_input('Email')
-            st.text_input('Name')
-            st.text_input('Institue')
-        with col2:
-            with st.container():
-                st.text_area('Research purpose', height=200)
-        submision = st.button('Submit Request')
+    st.dataframe(meta_tbl)
+    st.download_button(label=f"Download Metadata for {subtitle}",data=convert_df(meta_tbl),file_name=os.path.basename(meta_data_file))
 
+def request_download():
+
+    # selection = dataframe_with_selections(meta_tbl)
+    # st.dataframe(selection, column_config={"file_name":None}, width=600)
+    # checked_files = selection['file_name'].tolist()
+    # st.write(checked_files)
+    # if st.button(f"Download Request for {subtitle}") and len(checked_files) > 0:
+    # on = st.toggle(f'Show Download Request for {subtitle}')
+    # if on:
+    st.markdown(utils.content_font.format('Clonotype files are shared restrictedly on Zenodo. A temporary download link will be sent upon approval of your download request.'), unsafe_allow_html=True)
+    st.markdown(f'<p style="color:Green; font-size: 12px; font-family: Arial;"><a href={CLONOTYPE_DOWNLOAD_URL} target="_self">Clonotype Files Preview</a></p>', unsafe_allow_html=True)
+    col1, col2, col3 = st.columns((1, 1, 1))
+    with col1:
+        email = st.text_input('Email', key='email')
+        name = st.text_input('Name', key='name')
+        institute = st.text_input('Institute', key='institute')
+    with col2:
+        with st.container():
+            r_purpose = st.text_area('Research purpose', height=200, key='research_purpose')
+    submision = st.button('Submit Request')
+
+    # st.markdown(f'<p style="color:Green; font-size: 12px; font-family: Arial;"><a href="{CLONOTYPE_DOWNLOAD_URL}" target="_self"></a></p>', unsafe_allow_html=True)
+    if submision:
+        request_info_dict = OrderedDict({'Email':[email], 'Name':[name], 'Institute':[institute], 'Research purpose':[r_purpose]})
+        request_info_df = pd.DataFrame(request_info_dict)
+        request_info_str = '\n'.join([f'{k}:\t{v[0]}' for k,v in request_info_dict.items()])
+        st.dataframe(request_info_df, column_config={}, hide_index=True)
+        response = send_mail.send_email(send_mail.maintainer_receviers, send_mail.email_subject.format(email), send_mail.email_content.format(request_info_str, send_mail.valid_download_link), attachment_file=None)
+        st.markdown(utils.content_font.format(response), unsafe_allow_html=True)
+        LOG_INFO_FHAND.write('\t'.join([email, name, institute, f'{r_purpose}\n']))
+
+
+    
 def request_download_agrid(meta_data_file:str, subtitle):
     st.markdown(utils.sub_header_font.format(subtitle), unsafe_allow_html=True)
     meta_tbl = utils.read_csv(meta_data_file)
@@ -132,6 +159,7 @@ def request_download_agrid(meta_data_file:str, subtitle):
         on = st.toggle('Show Download Request')
         # if st.button(f"Download Request for {subtitle}") and selected_num > 0:
         if on and selected_num > 0:
+            selected_files = selected_tbl['file_name'].tolist()
             col1, col2, col3 = st.columns((1, 1, 1))
             with col1:
                 email = st.text_input('Email', key='email')
@@ -141,11 +169,21 @@ def request_download_agrid(meta_data_file:str, subtitle):
                 with st.container():
                     r_purpose = st.text_area('Research purpose', height=200, key='research_purpose')
             submision = st.button('Submit Request')
+            download_file = f'{PROJECT_DIR}/metadata/LungNodule_TCR_clonetypes.zip'
+            st.markdown(f'[Download]({download_file})')
             if submision:
                 request_info_dict = {'Email':[email], 'Name':[name], 'Institute':[institute], 'Research purpose':[r_purpose]}
                 request_info_df = pd.DataFrame(request_info_dict)
                 st.dataframe(request_info_df, column_config={}, hide_index=True)
                 st.markdown(utils.content_font.format('Your download request has been submitted. You will receive a download link via email upon approval'), unsafe_allow_html=True)
+                LOG_INFO_FHAND.write('\t'.join([email, name, institute, f'{r_purpose}\n']))
+               
+                st.markdown(f'<p style="color:Green; font-size: 12px; font-family: Arial;"><a href="{download_file}" target="_self">Download files</a></p>', unsafe_allow_html=True)
+                st.markdown(f'<p style="color:Green; font-size: 12px; font-family: Arial;"><a href="data:application/zip;" download="{download_file}">Download files</a></p>', unsafe_allow_html=True)
+                
+                
+                # st.write(selected_files)
+                # download_files(selected_files)
             
 # total_metadata_dir = '/haplox/users/donglf/web_services/TCR/total_data/'
 # LungCancer_meta_data = f"{total_metadata_dir}/metadata/LungCancer_TCR_data.csv"
@@ -153,6 +191,10 @@ def request_download_agrid(meta_data_file:str, subtitle):
 LungCancer_meta_data = f"{PROJECT_DIR}/metadata/LungCancer_TCR_data.csv"
 LungNodule_meta_data = f"{PROJECT_DIR}/metadata/LungNodule_TCR_data.csv"
 DOWNLOAD_TBL_COLS = ['Sample_ID', 'Type', 'file_name']
+LOG_INFO_FILE = f"{PROJECT_DIR}/logs/running.log"
+LOG_INFO_FHAND = open(LOG_INFO_FILE, 'a')
+CLONOTYPE_DOWNLOAD_URL = 'https://zenodo.org/records/13340610'
+
 access_policy = """
 This agreement governs the terms and conditions on which access will be granted to users of the sequencing and personal data generated by The HAPLOX Lung Cancer T-cell Receptor Database Research Group (LungTCR). 
 <br><br>
@@ -185,18 +227,16 @@ def download_button(text:str, input_file:str):
     input_tbl = pd.read_csv(input_file)
     st.download_button(label=f"Download {text}",data=convert_df(input_tbl),file_name=os.path.basename(input_file))
 
-tab1, tab2, tab3, tab4 = st.tabs(["Access Policy", "Lung Cancer TCR", "Lung Noduel TCR", 'Other Information'])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(["Access Policy", "Lung Cancer TCR", "Lung Noduel TCR", 'Other Information', 'Clonotype Files Download Request'])
 with tab1:
     col_intro_1, col_intro_2 = st.columns((7,3))
     with col_intro_1:
         st.markdown(utils.header_font.format("Data Access Agreement"), unsafe_allow_html=True)
         st.markdown(utils.content_font.format(access_policy), unsafe_allow_html=True)
 with tab2:
-    request_download_agrid(LungCancer_meta_data, "Lung Cancer TCR Data")
-    # request_download(LungCancer_meta_data, "Lung Cacner TCR Data")
+    metadata_preview(LungCancer_meta_data, "Lung Cacner TCR Data")
 with tab3:
-    request_download_agrid(LungNodule_meta_data, "Lung Nodule TCR Data")
-    # request_download(LungNodule_meta_data, "Lung Nodule TCR Data")
+    metadata_preview(LungNodule_meta_data, "Lung Nodule TCR Data")
 with tab4:
     st.markdown(utils.sub_header_font.format('Other information download'), unsafe_allow_html=True)
     info_dict = {
@@ -212,4 +252,5 @@ with tab4:
     }
     for _text, _file in info_dict.items():
         download_button(_text, _file)
-        
+with tab5:
+    request_download()

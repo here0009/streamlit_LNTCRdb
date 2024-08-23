@@ -5,3 +5,8 @@ output
 model_data/FeaturesCalculation_data/
 .streamlit/config.toml
 config.json
+logs/running.log
+metadata/LungCancer_TCR
+metadata/LungNodule_TCR
+*.zip
+send_mail.py
