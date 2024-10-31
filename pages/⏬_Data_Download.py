@@ -177,7 +177,6 @@ def request_download_agrid(meta_data_file:str, subtitle):
                 st.dataframe(request_info_df, column_config={}, hide_index=True)
                 st.markdown(utils.content_font.format('Your download request has been submitted. You will receive a download link via email upon approval'), unsafe_allow_html=True)
                 LOG_INFO_FHAND.write('\t'.join([email, name, institute, f'{r_purpose}\n']))
-               
                 st.markdown(f'<p style="color:Green; font-size: 12px; font-family: Arial;"><a href="{download_file}" target="_self">Download files</a></p>', unsafe_allow_html=True)
                 st.markdown(f'<p style="color:Green; font-size: 12px; font-family: Arial;"><a href="data:application/zip;" download="{download_file}">Download files</a></p>', unsafe_allow_html=True)
                 

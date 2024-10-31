@@ -13,7 +13,7 @@ config_fhand = open(CONFIG_FILE, "r")
 config_dict = json.load(config_fhand)
 
 
-@st.cache_data()
+# @st.cache_data()
 def get_treemap_plot(): 
     df = pd.read_csv(TOP1000_ENRICHED_SEQ_DATA)
     fig = px.treemap(df, path=['Group','cdr3aa'], values='score', color='cdr3aa')
