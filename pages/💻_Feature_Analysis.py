@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from plotly.subplots import make_subplots
 from utils import PROJECT_DIR, RUNNING, LN_TCRDB_LOGO_FILE
 import json
+import zipfile
 
 
 
@@ -90,7 +91,10 @@ def get_tcr_features(input_file, output_dir):
     if os.path.exists(f'{output_dir}/metadata.tsv'):
         show_meta_table(f'{output_dir}/metadata.tsv')
     else:
-        os.system(f'unzip -o {input_file} -d {output_dir}/metadata/')
+        os.makedirs(f"{output_dir}/metadata/", exist_ok=True)
+        with zipfile.ZipFile(input_file, 'r') as zip_hand:
+            zip_hand.extractall(f"{output_dir}/metadata/")
+        # os.system(f'unzip -o {input_file} -d {output_dir}/metadata/')
         os.system(f'{config_dict["python"]} {GET_METADATA_SCRIPT} {output_dir}/metadata/ {output_dir}/metadata.tsv')
         show_meta_table(f'{output_dir}/metadata.tsv')
     if os.path.exists(tcr_feature_data):
