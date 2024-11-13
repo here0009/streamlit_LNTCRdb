@@ -184,7 +184,6 @@ def request_download_agrid(meta_data_file:str, subtitle):
                 # st.write(selected_files)
                 # download_files(selected_files)
             
-# total_metadata_dir = '/haplox/users/donglf/web_services/TCR/total_data/'
 # LungCancer_meta_data = f"{total_metadata_dir}/metadata/LungCancer_TCR_data.csv"
 # LungNodule_meta_data = f"{total_metadata_dir}/metadata/LungNodule_TCR_data.csv"
 LungCancer_meta_data = f"{PROJECT_DIR}/metadata/LungCancer_TCR_data.csv"

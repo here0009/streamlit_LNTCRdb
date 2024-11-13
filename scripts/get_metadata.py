@@ -1,7 +1,6 @@
-#!/x03_haplox/users/donglf/miniconda3/envs/streamit/bin/python
 # coding: utf-8
 # aggregate the trb result of tcr analysis pipleine
-# example: /x03_haplox/users/donglf/tcr_scripts/get_metadata.py /x06_haplox/users/donglf/Project/research/tcr/220108_A00250_0087_AH337TDSX3/mutation 
+
 
 import pandas as pd
 import sys

@@ -10,6 +10,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from plotly.subplots import make_subplots
 from utils import PROJECT_DIR, RUNNING, LN_TCRDB_LOGO_FILE
+import json
 
 
 
@@ -90,7 +91,7 @@ def get_tcr_features(input_file, output_dir):
         show_meta_table(f'{output_dir}/metadata.tsv')
     else:
         os.system(f'unzip -o {input_file} -d {output_dir}/metadata/')
-        os.system(f'{GET_METADATA_SCRIPT} {output_dir}/metadata/ {output_dir}/metadata.tsv')
+        os.system(f'{config_dict["python"]} {GET_METADATA_SCRIPT} {output_dir}/metadata/ {output_dir}/metadata.tsv')
         show_meta_table(f'{output_dir}/metadata.tsv')
     if os.path.exists(tcr_feature_data):
         return tcr_feature_data
@@ -133,7 +134,10 @@ st.set_page_config(
 )
 with open( f"{PROJECT_DIR}/app/style.css" ) as css:
     st.markdown( f'<style>{css.read()}</style>' , unsafe_allow_html= True)
-    
+
+config_file = f'{PROJECT_DIR}/config.json'
+with open(config_file, 'r') as fhand:
+    config_dict = json.load(fhand)
 OUTPUT_DIR = f'{PROJECT_DIR}/output/FeaturesCalculation_output'
 THREADS = 10
 GET_METADATA_SCRIPT = f'{PROJECT_DIR}/scripts/get_metadata.py'
